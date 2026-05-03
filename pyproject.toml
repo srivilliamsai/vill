@@ -1,0 +1,47 @@
+[project]
+name = "vill"
+version = "0.1.0"
+description = "Vill: A decoder-only large language model built from scratch using modern Transformer architecture."
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "Apache-2.0"}
+authors = [
+    {name = "SriWilliams AI Lab"},
+]
+
+dependencies = [
+    "torch>=2.1.0",
+    "tokenizers>=0.20.0",
+    "datasets>=3.0.0",
+    "safetensors>=0.4.0",
+    "pyyaml>=6.0",
+    "tqdm>=4.66.0",
+    "wandb>=0.18.0",
+    "numpy>=1.24.0",
+]
+
+[project.optional-dependencies]
+alignment = [
+    "trl>=0.14.0",
+    "peft>=0.14.0",
+    "transformers>=4.48.0",
+    "accelerate>=1.0.0",
+]
+export = [
+    "gguf>=0.6.0",
+]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.8.0",
+]
+
+[build-system]
+requires = ["setuptools>=75.0"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
