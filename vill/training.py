@@ -116,10 +116,13 @@ class Trainer:
             fused=torch.cuda.is_available(),
         )
 
-        # Mixed precision
+        # Mixed precision -- only use on CUDA where it actually saves memory
         self.scaler = None
-        self.amp_dtype = torch.bfloat16
+        self.amp_dtype = torch.float32
+        self.use_amp = False
         if config.use_amp and self.device.type == "cuda":
+            self.use_amp = True
+            self.amp_dtype = torch.bfloat16
             if config.dtype == "float16":
                 self.amp_dtype = torch.float16
                 self.scaler = torch.cuda.amp.GradScaler()
@@ -170,7 +173,7 @@ class Trainer:
                 with torch.autocast(
                     device_type=self.device.type,
                     dtype=self.amp_dtype,
-                    enabled=self.config.use_amp,
+                    enabled=self.use_amp,
                 ):
                     outputs = self.model(input_ids=input_ids, labels=labels)
                     loss = outputs["loss"] / self.config.gradient_accumulation_steps
@@ -231,7 +234,7 @@ class Trainer:
                 break
             input_ids = batch["input_ids"].to(self.device)
             labels = batch["labels"].to(self.device)
-            with torch.autocast(device_type=self.device.type, dtype=self.amp_dtype, enabled=self.config.use_amp):
+            with torch.autocast(device_type=self.device.type, dtype=self.amp_dtype, enabled=self.use_amp):
                 outputs = self.model(input_ids=input_ids, labels=labels)
             total_loss += outputs["loss"].item()
             count += 1

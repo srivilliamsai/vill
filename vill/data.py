@@ -116,9 +116,10 @@ def create_dataloader(
     num_workers: int = 0,
 ) -> DataLoader:
     """Create a DataLoader from a streaming dataset."""
+    use_pin = torch.cuda.is_available()  # Only pin memory on CUDA
     return DataLoader(
         dataset,
         batch_size=batch_size,
         num_workers=num_workers,
-        pin_memory=True,
+        pin_memory=use_pin,
     )

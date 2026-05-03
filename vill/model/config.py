@@ -113,10 +113,27 @@ class VillConfig:
 # Preset Configurations
 # ---------------------------------------------------------------------------
 
+def vill_micro() -> VillConfig:
+    """
+    Vill-Micro: ~42M parameters.
+    Designed for Apple M1 with 8GB RAM. Uses shorter context
+    to keep activation memory within budget during training.
+    """
+    return VillConfig(
+        vocab_size=32000,
+        hidden_size=512,
+        num_hidden_layers=8,
+        num_attention_heads=8,
+        num_key_value_heads=4,
+        intermediate_size=1408,
+        max_position_embeddings=512,
+    )
+
+
 def vill_nano() -> VillConfig:
     """
-    Vill-Nano: 150M parameters.
-    Trainable on a single consumer GPU or Apple M1 with 8GB RAM.
+    Vill-Nano: ~124M parameters.
+    Trainable on a single 16GB GPU or Colab T4.
     """
     return VillConfig(
         vocab_size=32000,
@@ -125,7 +142,7 @@ def vill_nano() -> VillConfig:
         num_attention_heads=12,
         num_key_value_heads=4,
         intermediate_size=2048,
-        max_position_embeddings=2048,
+        max_position_embeddings=1024,
     )
 
 
@@ -182,6 +199,7 @@ def vill_large_moe() -> VillConfig:
 
 
 PRESET_CONFIGS = {
+    "vill-micro": vill_micro,
     "vill-nano": vill_nano,
     "vill-small": vill_small,
     "vill-medium": vill_medium,
