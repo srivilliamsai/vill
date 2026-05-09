@@ -260,8 +260,12 @@ class Trainer:
             backup_out = Path(self.config.backup_dir)
             backup_out.mkdir(parents=True, exist_ok=True)
             backup_path = backup_out / path.name
-            shutil.copy2(path, backup_path)
-            logger.info("Checkpoint backed up to Drive: %s", backup_path)
+            # Skip if source and destination are the same file
+            if path.resolve() != backup_path.resolve():
+                shutil.copy2(path, backup_path)
+                logger.info("Checkpoint backed up to Drive: %s", backup_path)
+            else:
+                logger.info("Checkpoint already in Drive (same path): %s", backup_path)
 
     def _load_checkpoint(self, path: str) -> None:
         checkpoint = torch.load(path, map_location=self.device)
