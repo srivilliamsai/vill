@@ -54,6 +54,7 @@ class TrainingConfig:
 
     # Paths
     output_dir: str = "checkpoints"
+    backup_dir: Optional[str] = None   # e.g. Google Drive path — auto-copies every checkpoint
     resume_from: Optional[str] = None
 
     def __post_init__(self):
@@ -241,6 +242,7 @@ class Trainer:
         return total_loss / max(count, 1)
 
     def _save_checkpoint(self) -> None:
+        import shutil
         out = Path(self.config.output_dir)
         out.mkdir(parents=True, exist_ok=True)
         path = out / f"vill_step_{self.global_step}.pt"
@@ -252,6 +254,14 @@ class Trainer:
             "config": self.model.config.__dict__,
         }, path)
         logger.info("Checkpoint saved: %s", path)
+
+        # Auto-backup to Drive (or any second directory) if configured
+        if self.config.backup_dir:
+            backup_out = Path(self.config.backup_dir)
+            backup_out.mkdir(parents=True, exist_ok=True)
+            backup_path = backup_out / path.name
+            shutil.copy2(path, backup_path)
+            logger.info("Checkpoint backed up to Drive: %s", backup_path)
 
     def _load_checkpoint(self, path: str) -> None:
         checkpoint = torch.load(path, map_location=self.device)

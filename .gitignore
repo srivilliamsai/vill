@@ -1,18 +1,76 @@
+# ── Python ────────────────────────────────────────────
 __pycache__/
 *.py[cod]
+*.pyo
+*.pyd
 *.egg-info/
+*.egg
 dist/
 build/
+.eggs/
+
+# ── Virtual environments ──────────────────────────────
 .venv/
+venv/
+env/
+ENV/
+
+# ── Model weights & checkpoints ───────────────────────
 *.pt
+*.pth
 *.bin
 *.safetensors
 *.gguf
+*.ckpt
 checkpoints/
-logs/
-wandb/
+runs/
+
+# ── Training data ─────────────────────────────────────
 data/raw/
 data/processed/
+data/cache/
+*.jsonl
+*.parquet
+*.arrow
+
+# ── Tokenizer (generated — not source code) ───────────
 tokenizer_model/
-.env
+
+# ── Logs & experiment tracking ────────────────────────
+logs/
+wandb/
+*.log
+*.csv
+tensorboard/
+lightning_logs/
+
+# ── Diagnostic & report outputs ───────────────────────
+scripts/vill_diagnostic_report.json
+*.report.json
+
+# ── Colab & Jupyter ───────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb
+
+# ── macOS ─────────────────────────────────────────────
 .DS_Store
+.AppleDouble
+.LSOverride
+
+# ── IDE & editors ─────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# ── Environment variables ─────────────────────────────
+.env
+.env.local
+secrets.yaml
+
+# ── pytest cache ──────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
