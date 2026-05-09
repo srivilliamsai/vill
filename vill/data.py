@@ -54,7 +54,6 @@ class PretrainingDataset(IterableDataset):
             self.dataset_name,
             split=self.split,
             streaming=True,
-            trust_remote_code=True,
         )
 
         buffer = []
