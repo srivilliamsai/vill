@@ -209,6 +209,7 @@ class VillForCausalLM(nn.Module):
         top_p: float = 0.95,
         top_k: int = 50,
         eos_token_id: Optional[int] = None,
+        repetition_penalty: float = 1.0,
     ) -> torch.Tensor:
         """
         Autoregressive text generation with top-p (nucleus) sampling.
@@ -220,6 +221,8 @@ class VillForCausalLM(nn.Module):
             top_p: Nucleus sampling threshold.
             top_k: Top-K filtering.
             eos_token_id: Token ID that signals end of generation.
+            repetition_penalty: Penalizes repeated tokens. 1.0 = no penalty,
+                >1.0 = less repetition (1.3–1.5 recommended for small models).
 
         Returns:
             Generated token IDs including the prompt.
@@ -237,6 +240,14 @@ class VillForCausalLM(nn.Module):
             outputs = self.forward(current_input, kv_caches=kv_caches)
             logits = outputs["logits"][:, -1, :]
             kv_caches = outputs["kv_caches"]
+
+            # Repetition penalty: reduce probability of already-generated tokens
+            if repetition_penalty != 1.0:
+                for token_id in set(generated[0].tolist()):
+                    if logits[0, token_id] > 0:
+                        logits[0, token_id] /= repetition_penalty
+                    else:
+                        logits[0, token_id] *= repetition_penalty
 
             if temperature > 0:
                 logits = logits / temperature
