@@ -146,6 +146,30 @@ def vill_nano() -> VillConfig:
     )
 
 
+def vill_nano_max() -> VillConfig:
+    """
+    Vill-Nano-Max: ~178M parameters.
+    Maximum model size that fits on a Colab T4 (15GB VRAM)
+    with batch_size=8 and bfloat16. Pushes GPU utilization
+    to ~12-13GB out of 15GB.
+
+    Changes vs vill-nano:
+      - 16 layers (vs 12) — deeper reasoning
+      - 3072 intermediate (vs 2048) — wider FFN for richer representations
+      - 12 attention heads with 4 KV heads — efficient GQA
+      - 1024 context length — same as nano
+    """
+    return VillConfig(
+        vocab_size=32000,
+        hidden_size=768,
+        num_hidden_layers=16,         # 4 more layers than nano
+        num_attention_heads=12,
+        num_key_value_heads=4,
+        intermediate_size=3072,       # 50% wider FFN
+        max_position_embeddings=1024,
+    )
+
+
 def vill_small() -> VillConfig:
     """
     Vill-Small: 1.5B parameters.
@@ -201,6 +225,7 @@ def vill_large_moe() -> VillConfig:
 PRESET_CONFIGS = {
     "vill-micro": vill_micro,
     "vill-nano": vill_nano,
+    "vill-nano-max": vill_nano_max,
     "vill-small": vill_small,
     "vill-medium": vill_medium,
     "vill-large-moe": vill_large_moe,
